@@ -1,6 +1,4 @@
-package de.tototec.osgi.osgisetup
-
-impi
+package de.tototec.osgi.setupbuilder
 
 class OsgiLauncherSetupBuilder(setup: OsgiSetup) {
 
