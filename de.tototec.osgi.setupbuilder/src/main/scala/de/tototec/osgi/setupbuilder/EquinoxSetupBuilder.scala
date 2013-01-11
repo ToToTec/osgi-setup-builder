@@ -8,14 +8,23 @@ import java.io.FileOutputStream
 import java.io.FileInputStream
 import java.util.Properties
 
+/**
+ * Create a typical Eclipse Equinox setup.
+ * Based on a target directory, all bundles will be copied into a sub directory "plugins" with the equinox specific name pattern ($symbolicName_$version.jar).
+ * A "config.ini" file will be created in the "configuration" sub-directory.
+ *
+ */
 class EquinoxSetupBuilder(
+  /** The OSGiSetup. */
   setup: OsgiSetup,
+  /** The target directory, where the framework setup will be created. Existing files will be overridden without notice. */
   targetDir: File) {
 
-  private lazy val log = new {
-    def debug(msg: => String) { println(msg) }
+  protected lazy val log = new {
+    def debug(msg: => String, throwable: Throwable = null) { println(msg) }
   }
 
+  /** Actually create the framework setup into the target directory. */
   def build {
     targetDir.mkdirs
 
