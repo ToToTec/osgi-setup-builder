@@ -4,6 +4,9 @@ import java.io.File
 import java.util.jar.Manifest
 import java.util.jar.JarFile
 import java.util.jar.Attributes
+import java.io.FileInputStream
+import java.io.BufferedInputStream
+import java.util.jar.JarInputStream
 
 case class OsgiSetup(
   /**
@@ -34,7 +37,15 @@ case class BundleConfig(
 
 class Bundle(val file: File) {
 
-  val manifest: Manifest = new JarFile(file).getManifest
+  val manifest: Manifest = {
+    val stream = new JarInputStream(new BufferedInputStream(new FileInputStream(file)))
+    try {
+    	stream.getManifest()
+    }
+    finally {
+      stream.close()
+    }
+}
 
   implicit class RichAttributes(attributes: Attributes) {
     def getValueOrDefault(name: String, default: String): String = attributes.getValue(name) match {
