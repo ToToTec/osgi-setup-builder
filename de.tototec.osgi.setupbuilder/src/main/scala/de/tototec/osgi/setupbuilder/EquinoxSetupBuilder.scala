@@ -39,17 +39,20 @@ class EquinoxSetupBuilder(
     setup.bundles.map { file =>
       // the Bundle 
       val bundle = new Bundle(file)
+      val isFrameworkBundle = setup.frameworkBundle == bundle.symbolicName
+      val bundleString = if (isFrameworkBundle) "framework bundle" else "bundle"
+      val copyBundle = !setup.doNotCopyBundles
 
       // the target location of the bundle
-      val bundleFile = if (setup.doNotCopyBundles) {
-        log.debug(s"Using bundle ${bundle.symbolicName} from source location.")
+      val bundleFile = if (!copyBundle) {
+        log.debug(s"Using ${bundleString} ${bundle.symbolicName} from source location.")
         file
 
       } else {
         val bundleFile = new File(pluginDir, s"${bundle.symbolicName}_${bundle.version}.jar")
 
         // copy bundle to target location
-        log.debug(s"Copying bundle ${bundle.symbolicName} to plugins directory.")
+        log.debug(s"Copying ${bundleString} ${bundle.symbolicName} to plugins directory.")
         val out = new FileOutputStream(bundleFile)
         val in = new FileInputStream(file)
         try {
@@ -63,12 +66,12 @@ class EquinoxSetupBuilder(
       }
 
       // Add the bundle to config, either as framework bundle or as plugin with optional start level and start configuration
-      if (setup.frameworkBundle == bundle.symbolicName) {
+      if (isFrameworkBundle) {
         equinoxConfig += ("osgi.framework" -> {
-          if (setup.doNotCopyBundles) s"file:${bundleFile.getAbsolutePath}"
-          else s"file:plugins/${bundleFile.getName}"
-
-        })
+          if (copyBundle) s"file:plugins/${bundleFile.getName}"
+          else s"file:${bundleFile.getAbsolutePath}"
+        }
+        )
       } else {
         // the suffix indicates the start level and the start state
         // <URL | simple bundle location>[@ [<start-level>] [":start"]]
@@ -83,8 +86,8 @@ class EquinoxSetupBuilder(
 
         var bundles = equinoxConfig.get("osgi.bundles").toSeq
         bundles ++= Seq(
-          if (setup.doNotCopyBundles) s"reference:file:${bundleFile.getAbsolutePath}${suffix}"
-          else s"reference:file:${bundleFile.getName}${suffix}"
+          if (copyBundle) s"reference:file:${bundleFile.getName}${suffix}"
+          else s"reference:file:${bundleFile.getAbsolutePath}${suffix}"
         )
 
         equinoxConfig += ("osgi.bundles" -> bundles.mkString(","))
