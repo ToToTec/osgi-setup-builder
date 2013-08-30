@@ -15,10 +15,10 @@ import java.util.Properties
  *
  */
 class EquinoxSetupBuilder(
-  /** The OSGiSetup. */
-  setup: OsgiSetup,
-  /** The target directory, where the framework setup will be created. Existing files will be overridden without notice. */
-  targetDir: File) {
+    /** The OSGiSetup. */
+    setup: OsgiSetup,
+    /** The target directory, where the framework setup will be created. Existing files will be overridden without notice. */
+    targetDir: File) {
 
   protected lazy val log = new {
     def debug(msg: => String, throwable: Throwable = null) { println(msg) }
@@ -41,22 +41,34 @@ class EquinoxSetupBuilder(
       val bundle = new Bundle(file)
 
       // the target location of the bundle
-      val bundleFile = new File(pluginDir, s"${bundle.symbolicName}_${bundle.version}.jar")
+      val bundleFile = if (setup.doNotCopyBundles) {
+        log.debug(s"Using bundle ${bundle.symbolicName} from source location.")
+        file
 
-      // copy bundle to target location
-      log.debug(s"Copying bundle ${bundle.symbolicName} to plugins directory.")
-      val out = new FileOutputStream(bundleFile)
-      val in = new FileInputStream(file)
-      try {
-        out.getChannel.transferFrom(in.getChannel, 0, Long.MaxValue)
-      } finally {
-        in.close
-        out.close
+      } else {
+        val bundleFile = new File(pluginDir, s"${bundle.symbolicName}_${bundle.version}.jar")
+
+        // copy bundle to target location
+        log.debug(s"Copying bundle ${bundle.symbolicName} to plugins directory.")
+        val out = new FileOutputStream(bundleFile)
+        val in = new FileInputStream(file)
+        try {
+          out.getChannel.transferFrom(in.getChannel, 0, Long.MaxValue)
+        } finally {
+          in.close
+          out.close
+        }
+
+        bundleFile
       }
 
       // Add the bundle to config, either as framework bundle or as plugin with optional start level and start configuration
       if (setup.frameworkBundle == bundle.symbolicName) {
-        equinoxConfig += ("osgi.framework" -> s"file:plugins/${bundleFile.getName}")
+        equinoxConfig += ("osgi.framework" -> {
+          if (setup.doNotCopyBundles) s"file:${bundleFile.getAbsolutePath}"
+          else s"file:plugins/${bundleFile.getName}"
+
+        })
       } else {
         // the suffix indicates the start level and the start state
         // <URL | simple bundle location>[@ [<start-level>] [":start"]]
@@ -70,7 +82,10 @@ class EquinoxSetupBuilder(
         }
 
         var bundles = equinoxConfig.get("osgi.bundles").toSeq
-        bundles ++= Seq("reference:file:" + bundleFile.getName + suffix)
+        bundles ++= Seq(
+          if (setup.doNotCopyBundles) s"reference:file:${bundleFile.getAbsolutePath}${suffix}"
+          else s"reference:file:${bundleFile.getName}${suffix}"
+        )
 
         equinoxConfig += ("osgi.bundles" -> bundles.mkString(","))
       }

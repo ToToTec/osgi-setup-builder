@@ -39,13 +39,13 @@ class SBuild(implicit project: Project) {
       sources = "scan:src/main/scala".files,
       destDir = Path("target/classes"),
       deprecation = true,
-      encoding = "UTF-8",
-      target = "jvm-1.5",
       debugInfo = "vars"
     )
   }
 
-  Target(jar) dependsOn "compile" ~ compileCp ~ bndCp exec { ctx: TargetContext =>
+  Target("scan:target/classes") dependsOn "compile"
+
+  Target(jar) dependsOn "scan:target/classes" ~ compileCp ~ bndCp exec { ctx: TargetContext =>
     addons.bnd.BndJar(
       destFile = ctx.targetFile.get,
       bndClasspath = bndCp.files,

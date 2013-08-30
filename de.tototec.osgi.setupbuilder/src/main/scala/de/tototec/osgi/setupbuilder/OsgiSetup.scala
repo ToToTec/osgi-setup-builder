@@ -8,31 +8,36 @@ import java.io.FileInputStream
 import java.io.BufferedInputStream
 import java.util.jar.JarInputStream
 
+/**
+ * Configuration for an OSGi setup.
+ *
+ * @param bundles All bundles (JARs) that will be part of the target OSGi Setup.
+ *   All given JARs must be valid OSGi Bundles.
+ * @param frameworkBundle The symbolic name of the framework bundle. The framework bundle must be contained in the `bundles` parameter.
+ * @param frameworkSettings Map of additional framework settings, that will be given to the OSGi Framework.
+ * @param bundleConfigs Additional bundle specific configurations, see [[BundleConfig]].
+ *   This allows to specify startup behavior and start level of a bundle.
+ * @param doNotCopyBundles If `true`, do not copy the bundles into the framework specific location but leave them in the original place (as given with parameter `bundles`).
+ */
 case class OsgiSetup(
-  /**
-   * All bundles that will be part of the target OSGi Setup.
-   * All given JARs must be valid OSGi Bundles.
-   */
   val bundles: Seq[File] = Seq(),
-  /** The symbolic name of the framework bundle. */
   val frameworkBundle: String = null,
-  /** Additional settings, that will be given to the OSGi Framework. */
   val frameworkSettings: Map[String, String] = Map(),
-  /**
- * Special settings per bundle, if required.
- * This allows to specify startup behavior and start level of a bundle.
- */
-  val bundleConfigs: Seq[BundleConfig] = Seq())
+  val bundleConfigs: Seq[BundleConfig] = Seq(),
+  val doNotCopyBundles: Boolean = false)
 
-case class BundleConfig(
-  /** The Bundle-SymbolicName to configure. */
-  symbolicName: String,
-  /**
- * Optionally specify the start level of this Bundle. An integer greater zero.
- * If not given (None), the bundle will inherit the frameworks default start level (osgi.defaultStartLevel).
+/**
+ * Bundle specific configuration.
+ *
+ * @param sysmbolicName The symbolic name of the bundle.
+ * @param startLevel The optional desired start level of that bundle.
+ *   An integer greater zero.
+ *   If not given (`None`), the bundle will inherit the frameworks default start level (`osgi.defaultStartLevel`).
+ * @param autoStart Set this to `true` if this bundle should be automatically started, once the start level is reached.
  */
+case class BundleConfig(
+  symbolicName: String,
   startLevel: Option[Int] = None,
-  /** Set this to <code>true</code> if this bundle should be automatically started, once the start level is reached. */
   autoStart: Boolean = false)
 
 class Bundle(val file: File) {
@@ -40,12 +45,11 @@ class Bundle(val file: File) {
   val manifest: Manifest = {
     val stream = new JarInputStream(new BufferedInputStream(new FileInputStream(file)))
     try {
-    	stream.getManifest()
-    }
-    finally {
+      stream.getManifest()
+    } finally {
       stream.close()
     }
-}
+  }
 
   implicit class RichAttributes(attributes: Attributes) {
     def getValueOrDefault(name: String, default: String): String = attributes.getValue(name) match {
