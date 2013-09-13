@@ -1,12 +1,12 @@
 package de.tototec.osgi.setupbuilder
 
-import java.io.File
-import java.util.jar.Manifest
-import java.util.jar.JarFile
-import java.util.jar.Attributes
-import java.io.FileInputStream
 import java.io.BufferedInputStream
+import java.io.File
+import java.io.FileInputStream
+import java.util.jar.Attributes
+import java.util.jar.JarException
 import java.util.jar.JarInputStream
+import java.util.jar.Manifest
 
 /**
  * Configuration for an OSGi setup.
@@ -45,10 +45,11 @@ class Bundle(val file: File) {
   val manifest: Manifest = {
     val stream = new JarInputStream(new BufferedInputStream(new FileInputStream(file)))
     try {
-      stream.getManifest()
-    } finally {
-      stream.close()
-    }
+      stream.getManifest() match {
+        case null => throw new JarException(s"""The supposed bundle file "${file}" does not contain a manifest (META-INF/MANIFEST.MF).""")
+        case m => m
+      }
+    } finally stream.close()
   }
 
   implicit class RichAttributes(attributes: Attributes) {
