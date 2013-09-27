@@ -49,3 +49,19 @@ val setup = OsgiSetup(
 val builder = new EquinoxSetupBuilder(setup = setup, targetDir = new File("target/equinox"))
 builder.build
 ```
+
+Download from Maven Central
+---------------------------
+
+You can download from Maven central:
+
+Maven coordinates:
+```xml
+<dependency>
+  <groupId>de.tototec</groupId>
+  <artifactId>de.tototec.osgi.setupbuilder</artifactId>
+  <version>0.0.3</version>
+</dependency>
+```
+
+SBuild: <code>mvn:de.tototec:de.tototec.osgi.setupbuilder:0.0.3</code>
