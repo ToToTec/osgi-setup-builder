@@ -8,7 +8,7 @@ import de.tototec.sbuild.ant.tasks._
 class SBuild(implicit project: Project) {
 
   val namespace = "de.tototec.osgi.setupbuilder"
-  val version = "0.0.2.9000"
+  val version = "0.0.3"
 
   val scalaVersion = "2.10.2"
 
@@ -26,7 +26,7 @@ class SBuild(implicit project: Project) {
 
   val jar = s"target/${namespace}-${version}.jar"
 
-  Target("phony:all") dependsOn "clean" ~ jar
+  Target("phony:all") dependsOn jar
 
   Target("phony:clean").evictCache exec {
     AntDelete(dir = Path("target"))
@@ -43,9 +43,7 @@ class SBuild(implicit project: Project) {
     )
   }
 
-  Target("scan:target/classes") dependsOn "compile"
-
-  Target(jar) dependsOn "scan:target/classes" ~ compileCp ~ bndCp exec { ctx: TargetContext =>
+  Target(jar) dependsOn "scan:target/classes" ~ compileCp ~ bndCp ~ "compile" exec { ctx: TargetContext =>
     addons.bnd.BndJar(
       destFile = ctx.targetFile.get,
       bndClasspath = bndCp.files,
