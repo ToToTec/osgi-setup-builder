@@ -35,7 +35,7 @@ val setup = OsgiSetup(
   frameworkBundle = "org.eclipse.core",
   frameworkSettings = Map(
     "osgi.clean" -> "true",
-    "osgi.console -> "",
+    "osgi.console" -> "",
     "eclipse.application.launchDefault" -> "false",
     "eclipse.consoleLog" -> "true",
     "osgi.bundles.defaultStartLevel" -> "4",
