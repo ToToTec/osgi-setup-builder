@@ -53,7 +53,7 @@ builder.build
 Download from Maven Central
 ---------------------------
 
-You can download from Maven central:
+You can download from http://central.maven.org/maven2/de/tototec/de.tototec.osgi.setupbuilder/[Maven Central]:
 
 Maven coordinates:
 ```xml
