@@ -4,10 +4,10 @@ OSGi Setup Builder
 Build OSGi Framework setups. 
 
 Currently supported OSGi Launcher:
-* Eclispe Equinox Launcher
+* Eclipse Equinox Launcher
 
 Planned supported OSGi Launchers:
-* ToTeTec OSGi Launcher
+* ToToTec OSGi Launcher
 
 The OSGi Setup Builder API is designed to be easily integrated into build tools like [SBuild](http://sbuild.tototec.de).
 
