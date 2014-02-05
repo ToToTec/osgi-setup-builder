@@ -1,22 +1,26 @@
-OSGi Setup Builder
-==================
+= OSGi Setup Builder
+:author: Tobias Roeser
+:builderversion: 0.0.3
 
 Build OSGi Framework setups. 
 
 Currently supported OSGi Launcher:
+
 * Eclipse Equinox Launcher
 
 Planned supported OSGi Launchers:
+
 * ToToTec OSGi Launcher
 
-The OSGi Setup Builder API is designed to be easily integrated into build tools like [SBuild](http://sbuild.tototec.de).
+The OSGi Setup Builder API is designed to be easily integrated into build tools like http://sbuild.tototec.de[SBuild].
 
-License: [Apache License Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.html)
+License: http://www.apache.org/licenses/LICENSE-2.0.html[Apache License Version 2.0]
 
-Creating a Eclipse Equinox Setup
---------------------------------
+== Creating a Eclipse Equinox Setup
 
-```scala
+[source,scala]
+----
+scala
 import de.tototec.osgi.setupbuilder._
 import java.io.File
 
@@ -48,20 +52,31 @@ val setup = OsgiSetup(
 
 val builder = new EquinoxSetupBuilder(setup = setup, targetDir = new File("target/equinox"))
 builder.build
-```
+----
 
-Download from Maven Central
----------------------------
+== Usage Example with SBuild
 
-You can download from [Maven Central](http://central.maven.org/maven2/de/tototec/de.tototec.osgi.setupbuilder/):
+TODO
+
+== Download from Maven Central
+
+You can download from http://central.maven.org/maven2/de/tototec/de.tototec.osgi.setupbuilder/[Maven Central]:
 
 Maven coordinates:
-```xml
+
+[source,xml,subs="attributes]]
+----
 <dependency>
   <groupId>de.tototec</groupId>
   <artifactId>de.tototec.osgi.setupbuilder</artifactId>
-  <version>0.0.3</version>
+  <version>{builderversion}</version>
 </dependency>
-```
+----
 
-SBuild: <code>mvn:de.tototec:de.tototec.osgi.setupbuilder:0.0.3</code>
+SBuild: `mvn:de.tototec:de.tototec.osgi.setupbuilder:{builderversion}`
+
+== ChangeLog
+
+=== OSGi Setup Builder 0.0.3
+
+* Initial Release.
