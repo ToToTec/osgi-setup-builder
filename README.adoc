@@ -2,7 +2,7 @@
 :author: Tobias Roeser
 :builderversion: 0.0.3
 
-Build OSGi Framework setups. 
+Build OSGi Framework setups.
 
 Currently supported OSGi Launcher:
 
@@ -35,7 +35,7 @@ val bundles = Seq(
 ).map(f => new File("jars/" + f))
 
 val setup = OsgiSetup(
-  bundles = bundles, 
+  bundles = bundles,
   frameworkBundle = "org.eclipse.core",
   frameworkSettings = Map(
     "osgi.clean" -> "true",
@@ -64,7 +64,7 @@ You can download from http://central.maven.org/maven2/de/tototec/de.tototec.osgi
 
 Maven coordinates:
 
-[source,xml,subs="attributes]]
+[source,xml,subs="attributes,verbatim"]]
 ----
 <dependency>
   <groupId>de.tototec</groupId>
