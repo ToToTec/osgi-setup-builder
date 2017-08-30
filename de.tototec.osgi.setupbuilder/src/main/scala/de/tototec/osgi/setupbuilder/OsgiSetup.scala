@@ -20,11 +20,29 @@ import java.util.jar.Manifest
  * @param doNotCopyBundles If `true`, do not copy the bundles into the framework specific location but leave them in the original place (as given with parameter `bundles`).
  */
 case class OsgiSetup(
-  val bundles: Seq[File] = Seq(),
-  val frameworkBundle: String = null,
-  val frameworkSettings: Map[String, String] = Map(),
-  val bundleConfigs: Seq[BundleConfig] = Seq(),
-  val doNotCopyBundles: Boolean = false)
+  val bundles: Seq[File],
+  val frameworkBundle: Option[String],
+  val frameworkSettings: Map[String, String],
+  val bundleConfigs: Seq[BundleConfig],
+  val doNotCopyBundles: Boolean)
+
+object OsgiSetup {
+  def apply(
+    bundles: Seq[File] = Seq(),
+    frameworkBundle: String = null,
+    frameworkSettings: Map[String, String] = Map(),
+    bundleConfigs: Seq[BundleConfig] = Seq(),
+    doNotCopyBundles: Boolean = false): OsgiSetup = {
+    
+    OsgiSetup(
+      bundles,
+      Option(frameworkBundle),
+      frameworkSettings,
+      bundleConfigs,
+      doNotCopyBundles
+    )
+  }
+}
 
 /**
  * Bundle specific configuration.
