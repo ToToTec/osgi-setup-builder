@@ -39,7 +39,7 @@ class EquinoxSetupBuilder(
     setup.bundles.map { file =>
       // the Bundle 
       val bundle = new Bundle(file)
-      val isFrameworkBundle = setup.frameworkBundle == bundle.symbolicName
+      val isFrameworkBundle = setup.frameworkBundle.exists(fb => fb == bundle.symbolicName)
       val bundleString = if (isFrameworkBundle) "framework bundle" else "bundle"
       val copyBundle = !setup.doNotCopyBundles
 
